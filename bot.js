@@ -135,7 +135,7 @@ client.on("message", async message => {
             }
         case 'list_players':
             {
-                Player.find(function (error, players) {
+                Player.distinct(function (error, players) {
                     if (error) console.error(error);
                     let _players = _.map(players, function (item) {
                         return `${item}`
