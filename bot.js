@@ -31,6 +31,21 @@ const client = new Discord.Client();
 const config = require("./config/config.json");
 const envConfig = require("./config/envConf.json");
 
+// Load up mongoose library
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGODB_URI, {
+    useMongoClient: true
+});
+mongoose.Promise = global.Promise;
+const Schema = mongoose.Schema;
+
+// Player object
+var PlayerSchema = new Schema({
+    player_id: String,
+    player_name: String
+});
+var Player = mongoose.model('Player', PlayerSchema);
+
 
 
 // Client ready
@@ -100,9 +115,47 @@ client.on("message", async message => {
                 sendMessage(`help message`, message)
                 break;
             }
+        case 'register':
+            {
+                if (args[1] !== undefined) {
+
+                    var newUser = new Player({
+                        player_id: message.author.id,
+                        player_name: args[1]
+                    });
+                    newUser.save(function (error) {
+                        if (error) console.error(error);
+                    });
+                    return;
+                } else {
+                    sendMessage(`Player name missing. Proper command usage is : !register CMDR_Name`, message);
+                    return;
+                }
+                break;
+            }
+        case 'list_players':
+            {
+                Player.distinct('player_id', function (error, players) {
+                    if (error) console.error(error);
+                    let _players = _.map(players, function (item) {
+                        return `${item}`
+                    });
+                    sendMessage(`Player list : ${_players.join(', ')}`, message);
+                });
+                break;
+            }
         default:
             {}
     }
+});
+
+// Keepalive
+schedule.scheduleJob("0 /5 * * * *", function () {
+    console.log(`Sending keepalive...`);
+    request(process.env.APP_URL, function (error, response, body) {
+        console.log('error:', error); // Print the error if one occurred
+        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    });
 });
 
 
