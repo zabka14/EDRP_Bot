@@ -31,13 +31,6 @@ const client = new Discord.Client();
 const config = require("./config/config.json");
 const envConfig = require("./config/envConf.json");
 
-// Load up mongoose library
-const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI, {
-    useMongoClient: true
-});
-mongoose.Promise = global.Promise;
-const Schema = mongoose.Schema;
 
 
 // Client ready
