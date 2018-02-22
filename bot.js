@@ -117,11 +117,11 @@ client.on("message", async message => {
             }
         case 'register':
             {
-                if (args[1] !== undefined) {
+                if (args[0] !== undefined) {
 
                     var newUser = new Player({
                         player_id: message.author.id,
-                        player_name: args[1]
+                        player_name: args[0]
                     });
                     newUser.save(function (error) {
                         if (error) console.error(error);
@@ -135,7 +135,7 @@ client.on("message", async message => {
             }
         case 'list_players':
             {
-                Player.distinct('player_id', function (error, players) {
+                Player.find(function (error, players) {
                     if (error) console.error(error);
                     let _players = _.map(players, function (item) {
                         return `${item}`
