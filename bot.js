@@ -29,7 +29,6 @@ const client = new Discord.Client();
 
 // Here we load the config.json file that contains our token and our prefix values.
 const config = require("./config/config.json");
-const envConfig = require("./config/envConf.json");
 
 // Load up mongoose library
 const mongoose = require('mongoose');
@@ -135,9 +134,10 @@ client.on("message", async message => {
             }
         case 'list_players':
             {
-                Player.distinct(function (error, players) {
+                var findPlayers;
+                Player.find(function (error, players) {
                     if (error) console.error(error);
-                    let _players = _.map(players, function (item) {
+                    findPlayers = _.map(players, function (item) {
                         return `${item}`
                     });
                     sendMessage(`Player list : ${_players.join(', ')}`, message);
@@ -173,4 +173,4 @@ var sendMessage = function (message, obj_msg, doDelete = false) {
     }
 }
 
-client.login(envConfig.BOT_TOKEN);
+client.login(process.env.BOT_TOKEN);
